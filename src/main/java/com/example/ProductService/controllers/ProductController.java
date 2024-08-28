@@ -1,33 +1,29 @@
 package com.example.ProductService.controllers;
 
+import com.example.ProductService.models.Product;
+import com.example.ProductService.services.FakeStoreProductService;
+import com.example.ProductService.services.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
 public class ProductController {
 
-    // Endpoint name: GET /hello
-    @GetMapping("/hello")
-    public String helloWorld() {
-         System.out.println("Hello world");
-         return "Hello world via return param";
-    }
+    @Autowired
+    private ProductService productService;
 
-    // Endpoint name: GET /hello/{name}
-    @GetMapping("/hello/{name}")
-    public String helloWithName(@PathVariable("name") String name) {
-        return "Hello " + name;
-    }
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") int id) {
+        if (id < 1 || id > 20){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
+        }
 
-    // Endpoint with multiple vars  GET /show/{showId}/seat/{seatId}
-    @GetMapping("/show/{showId}/seat/{seatId}")
-    public String bmsExample(@PathVariable("showId") String showId, @PathVariable("seatId") int seatId) {
-        return "Hello " + showId + " " + seatId;
+        Product product = productService.getProductById(id);
+        return new ResponseEntity<>(product, HttpStatusCode.valueOf(200));
     }
 
 }
